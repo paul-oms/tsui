@@ -161,12 +161,16 @@ func renderStatusBar(m *model) string {
 			Bold(true).
 			Render("Filter: ")
 		text += lipgloss.NewStyle().
-			Foreground(ui.Secondary).
+			Foreground(ui.White).
 			Render(m.exitNodeFilter)
+		// Add a cursor indicator
+		text += lipgloss.NewStyle().
+			Foreground(ui.Secondary).
+			Render("█")
 		if m.exitNodeFilter == "" {
 			text += lipgloss.NewStyle().
 				Faint(true).
-				Render("(type to search, esc to cancel)")
+				Render(" (type to search, esc to cancel)")
 		} else {
 			text += lipgloss.NewStyle().
 				Faint(true).

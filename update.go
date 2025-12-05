@@ -132,16 +132,40 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return m, tea.Quit
 			}
 
-		case "left", "h", "a":
+		case "left", "h":
 			if !m.exitNodeFilterMode {
 				m.menu.CloseSubmenu()
 			}
-		case "up", "k", "w":
+		case "a":
+			if m.exitNodeFilterMode {
+				m.exitNodeFilter += "a"
+				m.updateMenus()
+			} else {
+				m.menu.CloseSubmenu()
+			}
+		case "up":
 			m.menu.CursorUp()
-		case "down", "j", "s":
+		case "down":
 			m.menu.CursorDown()
+		case "k", "w":
+			if !m.exitNodeFilterMode {
+				m.menu.CursorUp()
+			} else {
+				m.exitNodeFilter += msg.String()
+				m.updateMenus()
+			}
+		case "j", "s":
+			if !m.exitNodeFilterMode {
+				m.menu.CursorDown()
+			} else {
+				m.exitNodeFilter += msg.String()
+				m.updateMenus()
+			}
 		case "right", "l", "d":
-			if !m.exitNodeFilterMode && !m.menu.IsSubmenuOpen() {
+			if m.exitNodeFilterMode && (msg.String() == "l" || msg.String() == "d") {
+				m.exitNodeFilter += msg.String()
+				m.updateMenus()
+			} else if !m.exitNodeFilterMode && !m.menu.IsSubmenuOpen() {
 				// Show a tip when entering the exit nodes menu
 				cmd := m.menu.Activate()
 				if m.menu.GetSelectedItem() == m.exitNodes && len(m.state.ExitNodes) > 0 {
